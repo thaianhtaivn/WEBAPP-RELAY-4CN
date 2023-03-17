@@ -20,7 +20,7 @@ const defaultRelayData = [
 function App() {
   const [client, setClient] = useState(null);
   const [relayData, setRelayData] = useState(defaultRelayData);
-  const [relayID, setRelayID] = useState("relay-demo");
+  const [relayID, setRelayID] = useState(localStorage.getItem("HWID") || "");
 
   const handleSwitch = useCallback(
     (value) => {
@@ -60,6 +60,7 @@ function App() {
       message.destinationName = relayID;
       message.qos = 0;
       newClient.send(message);
+      console.log("Connect to " + relayID);
     }
 
     function onConnectionLost(responseObject) {
@@ -80,6 +81,7 @@ function App() {
     }
 
     connect();
+    localStorage.setItem("HWID", relayID)
 
     return () => {
       newClient.disconnect();
@@ -95,7 +97,9 @@ function App() {
         <div className="relay-id d-flex mb-3">
           <label className="col-form-label me-2">Relay ID:</label>
           <div className="col">
-            <input type="email" className="form-control" placeholder="Relay ID" onChange={(e) => setRelayID(e.target.value)} />
+            <input type="email" className="form-control" placeholder="Relay ID" onChange={(e) => setRelayID(e.target.value)}
+              defaultValue={relayID}
+            />
           </div>
         </div>
         {relayData.map((item, index) => (
